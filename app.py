@@ -5,6 +5,11 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 from ultralytics import YOLO
 from PIL import Image
 from extensions import db, login_manager  # Import db and login_manager from extensions
+from flask import send_file
+import io
+from PIL import Image, ImageDraw
+from inference_sdk import InferenceHTTPClient
+
 
 # Initialize the Flask app
 def create_app():
@@ -16,6 +21,12 @@ def create_app():
     login_manager.init_app(app)
     bcrypt = Bcrypt(app)
 
+    CLIENT = InferenceHTTPClient(
+    api_url="https://detect.roboflow.com",
+    api_key="HNggSix27PGd4G84jAHN"  # Your API key
+)
+
+
 
     from Database import User  # Import models here after initializing the app to avoid circular imports
 
@@ -26,6 +37,9 @@ def create_app():
             print('Database created successfully.')
 
     # Load the YOLOv8 model
+    # Load the new model for plant detection (YOLOv8 or any other)
+    plant_detection_model = YOLO("C:\\Users\\ASUS\\Downloads\\Research New\\Codes and Data\\test\\runs\\detect\\plant detection\\weights\\best.pt")
+
     model = YOLO("C:\\Users\\ASUS\\Downloads\\Research New\\Codes and Data\\test\\runs\\detect\\train30\\weights\\best.pt")
 
     # Default landing page (Welcome page)
@@ -53,28 +67,108 @@ def create_app():
         
         try:
             img = Image.open(file)
-            results = model.predict(source=img)
+            img_path = os.path.join("static", file.filename)
+            img.save(img_path)  # Save the image temporarily for API processing
+
+            # Step 1: Use the InferenceHTTPClient API to check the class of the image
+            try:
+                result = CLIENT.infer(img_path, model_id="obstacle-detection-yeuzf/5")
+                api_predictions = result.get('predictions', [])
+
+                # Check if any class is detected
+                if not api_predictions:
+                    # If no predictions from the API (empty), proceed to plant detection
+                    print("No predictions from the API. Proceeding with plant detection.")
+                else:
+                    # Process API predictions
+                    api_class = api_predictions[0].get('class', '')
+                    if api_class not in ['tree', 'leaf', 'plant']:
+                        # If the API predicts something other than plant-related, stop and show a message
+                        return render_template(
+                            'detect.html',
+                            prediction_text=f"The image contains a {api_class}. Plant Cure only works on plant images."
+                        )
+            except Exception as api_error:
+                # If API call fails or raises an exception, log it and proceed to plant detection
+                print(f"API Error: {api_error}. Proceeding with plant detection.")
+
+            # Step 2: Use the plant detection model (YOLOv8) even if the API returns no results or predicts 'tree', 'leaf', or 'plant'
+            plant_results = plant_detection_model.predict(source=img)
+            plant_present = False
+
+            # Check if any bounding box with high confidence is detected
+            for result in plant_results:
+                for box in result.boxes:
+                    confidence = round(box.conf[0].item(), 2)
+                    if confidence > 0.50:
+                        plant_present = True
+                        break
             
+            if not plant_present:
+                # If no plant is detected, return a message
+                return render_template(
+                    'detect.html',
+                    prediction_text="The picture does not contain a plant or is unclear. Plant Cure works best on plants."
+                )
+            
+            # Step 3: Proceed with the disease detection model (if plant detection is successful)
+            results = model.predict(source=img)
             predictions = []
+            draw = ImageDraw.Draw(img)
+            has_valid_prediction = False
+            predicted_class = None  # Store the predicted class
+            show_info_button = False  # This flag controls the visibility of the "Know More" button
+
             for result in results:
                 for box in result.boxes:
-                    predictions.append({
-                        'class': result.names[box.cls[0].item()],
-                        'confidence': round(box.conf[0].item(), 2),
-                        'box': [round(coord, 2) for coord in box.xyxy[0].tolist()]
-                    })
+                    class_name = result.names[box.cls[0].item()]
+                    confidence = round(box.conf[0].item(), 2)
+                    bbox = [round(coord, 2) for coord in box.xyxy[0].tolist()]
+                    
+                    if confidence > 0.90:
+                        predictions.append({
+                            'class': class_name,
+                            'confidence': confidence,
+                            'box': bbox
+                        })
+                        has_valid_prediction = True
+                        predicted_class = class_name  # Capture the predicted class
+                        show_info_button = True  # Set flag to true if prediction is valid
+
+                        # Draw the bounding box on the image
+                        draw.rectangle(bbox, outline="red", width=3)
+                        draw.text((bbox[0], bbox[1]), f"{class_name} {confidence}", fill="red")
             
-            if predictions:
+            if has_valid_prediction:
                 prediction_text = "Predictions:\n"
                 for pred in predictions:
                     prediction_text += f"Class: {pred['class']}, Confidence: {pred['confidence']}, Box: {pred['box']}\n"
             else:
-                prediction_text = "No objects detected."
+                prediction_text = "Unidentified Disease or image not clear. Please upload a better quality image."
             
-            return render_template('detect.html', prediction_text=prediction_text)
+            img_filename = "detected_image.png"
+            img_path = os.path.join("static", img_filename)
+            img.save(img_path)
+            
+            img_url = url_for('static', filename=img_filename)
+
+            # Pass the show_info_button flag and predicted_class to the template
+            return render_template('detect.html', prediction_text=prediction_text, img_url=img_url, predicted_class=predicted_class, show_info_button=show_info_button)
         
         except Exception as e:
             return render_template('detect.html', prediction_text=f"Error processing image: {e}")
+
+
+
+
+
+
+    # Modify the info route to receive the predicted class
+    @app.route('/info/<condition>', methods=['GET', 'POST'])
+    @login_required
+    def info(condition):
+        return render_template('info.html', condition=condition)
+
 
 
     @app.route('/login', methods=['GET', 'POST'])
