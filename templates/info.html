@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information</title>
+    <link rel="stylesheet" href="../static/css/info.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6ffe6; /* Light green background */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+
+        h1 {
+            margin-top: 1.5em; /* Slightly reduced margin for a balanced layout */
+            text-align: center;
+            color: #2E7D32; /* A softer green tone */
+            font-size: 2.5em; /* Larger font size for prominence */
+            font-family: 'Roboto Slab', serif; /* Elegant, professional font */
+            text-transform: uppercase; /* Makes the heading all caps for a bold statement */
+            letter-spacing: 2px; /* Adds space between letters for readability */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        }
+
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            padding: 20px;
+            text-align: center;
+            border-left: 8px solid #33cc33; /* Green side border */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h2 {
+            color: #006600;
+        }
+
+        .card p {
+            color: #333;
+        }
+
+        /* Button styling */
+        .btn-info {
+            background-color: #33cc33;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn-info:hover {
+            background-color: #29a329;
+        }
+
+        nav {
+            width: 100%;
+            background-color: #388e3c;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            }
+
+        nav .nav-left {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-left: 20px;
+            }
+
+        nav .nav-right a {
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+            font-size: 1.1em;
+            }
+
+        /* Container for background image */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("{{ url_for('static', filename='images/nursery.jpg') }}"); /* Path to your background image */
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            filter: blur(10px); /* Apply blur effect */
+        }
+
+        /* Apply an overlay to darken the background slightly */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent overlay */
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background image container -->
+    <div class="background-container"></div>
+    <div class="overlay"></div>
+
+    <nav>
+        <div class="nav-left">
+          <a href="{{ url_for('home') }}" style="color: white; text-decoration: none;">Plant Cure</a>
+        </div>
+        <div class="nav-right">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+          {% endif %}
+        </div>
+    </nav>
+
+    <h1>Detailed Information on {{ predicted_class }}</h1>
+
+    <div class="card-container">
+        <!-- Bitter Gourd Conditions -->
+        {% if plant == "bittergourd" %}
+            {% if predicted_class == "healthy" %}
+            <div class="card">
+                <h2>Healthy Bitter Gourd</h2>
+                <p>The plant is healthy and showing no symptoms of disease or nutrient deficiency.</p>
+            </div>
+            {% elif predicted_class == "DM" %}
+            <div class="card">
+                <h2>Downy Mildew (DM)</h2>
+                <p>A fungal disease causing yellow spots on leaves that turn brown. Affects photosynthesis and reduces yield.</p>
+            </div>
+            {% elif predicted_class == "LS" %}
+            <div class="card">
+                <h2>Leaf Spot (LS)</h2>
+                <p>This disease causes dark, circular spots on leaves, leading to premature leaf drop and stunted growth.</p>
+            </div>
+            {% elif predicted_class == "JAS" %}
+            <div class="card">
+                <h2>Jassid (JAS)</h2>
+                <p>A small insect that feeds on plant sap, causing yellowing of leaves and reduced growth. Severe infestation can cause leaf curling.</p>
+            </div>
+            {% elif predicted_class == "K" %}
+            <div class="card">
+                <h2>Potassium Deficiency (K)</h2>
+                <p>Browning of leaf edges, weak stems, and poor fruit development are symptoms of potassium deficiency.</p>
+            </div>
+            {% elif predicted_class == "K_Mg" %}
+            <div class="card">
+                <h2>Potassium and Magnesium Deficiency (K Mg)</h2>
+                <p>Yellowing between leaf veins in older leaves and poor plant vigor. Both nutrients are essential for energy production.</p>
+            </div>
+            {% elif predicted_class == "N" %}
+            <div class="card">
+                <h2>Nitrogen Deficiency (N)</h2>
+                <p>Pale, yellow leaves and slow growth indicate nitrogen deficiency. Stems may be small and weak.</p>
+            </div>
+            {% elif predicted_class == "N_K" %}
+            <div class="card">
+                <h2>Nitrogen and Potassium Deficiency (N K)</h2>
+                <p>Yellowing leaves, poor plant growth, and weak fruit development due to combined nitrogen and potassium deficiencies.</p>
+            </div>
+            {% elif predicted_class == "N_Mg" %}
+            <div class="card">
+                <h2>Nitrogen and Magnesium Deficiency (N Mg)</h2>
+                <p>Yellowing between leaf veins and stunted growth, especially in older leaves, are signs of this combined deficiency.</p>
+            </div>
+            {% endif %} <!-- Closing if for bitter gourd conditions -->
+
+        <!-- Tomato Conditions -->
+        {% elif plant == "tomato" %}
+            {% if predicted_class == "healthy" %}
+            <div class="card">
+                <h2>Healthy Tomato</h2>
+                <p>The tomato plant is in good health with no visible symptoms of diseases or nutrient deficiencies.</p>
+            </div>
+            {% elif predicted_class == "LM" %}
+            <div class="card">
+                <h2>Leaf Miner (LM)</h2>
+                <p>Leaf miners burrow into leaves, causing winding tunnels that reduce the plant's ability to photosynthesize.</p>
+            </div>
+            {% elif predicted_class == "MIT" %}
+            <div class="card">
+                <h2>Mite (MIT)</h2>
+                <p>Mites feed on the plant's leaves, causing them to turn yellow or bronze, leading to reduced plant health.</p>
+            </div>
+            {% elif predicted_class == "JAS_MIT" %}
+            <div class="card">
+                <h2>Jassid and Mite (JAS MIT)</h2>
+                <p>A combined attack from jassids and mites leads to leaf curling, yellowing, and stunted growth.</p>
+            </div>
+            {% elif predicted_class == "K" %}
+            <div class="card">
+                <h2>Potassium Deficiency (K)</h2>
+                <p>Potassium deficiency causes leaf edge browning, weak stems, and poor fruit quality and size.</p>
+            </div>
+            {% elif predicted_class == "N" %}
+            <div class="card">
+                <h2>Nitrogen Deficiency (N)</h2>
+                <p>Yellow leaves and weak growth indicate nitrogen deficiency, with older leaves turning pale.</p>
+            </div>
+            {% elif predicted_class == "N_K" %}
+            <div class="card">
+                <h2>Nitrogen and Potassium Deficiency (N K)</h2>
+                <p>Symptoms include yellowing leaves, weak stems, and small, poorly developed fruit.</p>
+            </div>
+            {% endif %} <!-- Closing if for tomato conditions -->
+        {% else %}
+            <p>No detailed information available for this condition.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

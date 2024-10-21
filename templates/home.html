@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Cure - Home</title>
+    <link rel="stylesheet" href="../static/css/home.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+
+        /* Container for background image */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("{{ url_for('static', filename='images/nursery.jpg') }}"); /* Path to your background image */
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            filter: blur(10px); /* Apply blur effect */
+        }
+
+        /* Apply an overlay to darken the background slightly */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent overlay */
+            z-index: -1;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <!-- Background image container -->
+    <div class="background-container"></div>
+    <div class="overlay"></div>
+
+    <!-- Top navigation bar -->
+    <div class="navbar">
+        <h1>Plant Cure</h1>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <!-- Bubble for location and temperature -->
+    <div class="location-bubble">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Map_icon.svg/512px-Map_icon.svg.png" alt="Location Icon">
+        <span id="location-info">Fetching location...</span>
+    </div>
+
+    <!-- Main container for the cards -->
+    <div class="container">
+        <h1>Select a Plant</h1>
+
+        <div class="card-container">
+            <!-- Bitter Gourd Card -->
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/bg.jpg') }}" alt="Bitter Gourd">
+                <h2>Bitter Gourd</h2>
+                <form action="{{ url_for('detect_redirect') }}" method="POST">
+                    <button type="submit" name="plant" value="bittergourd">Detect</button>
+                </form>
+            </div>
+
+            <!-- Tomato Card -->
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/tomato.jpg') }}" alt="Tomato">
+                <h2>Tomato</h2>
+                <form action="{{ url_for('detect_redirect') }}" method="POST">
+                    <button type="submit" name="plant" value="tomato">Detect</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Suggest a plant -->
+        <div class="suggestion-section">
+            <h2>Suggest a Plant to Add</h2>
+            <form action="{{ url_for('suggest_plant') }}" method="POST">
+                <input type="text" name="plant_suggestion" placeholder="Enter plant name" required>
+                <button type="submit">Submit Suggestion</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch location and temperature using Geolocation API and OpenWeather API
+        async function fetchLocationAndTemperature() {
+            try {
+                // Check if geolocation is supported
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async function (position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        // OpenWeather API call to get weather data
+                        const apiKey = '6ade7b0b66257f39069cfe5f6402a0a4'; // Replace with your actual OpenWeather API key
+                        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
+
+                        const response = await fetch(weatherUrl);
+                        const data = await response.json();
+
+                        if (data) {
+                            const location = data.name;
+                            const temperature = `${Math.round(data.main.temp)}°C`;
+
+                            // Display location and temperature in the bubble
+                            document.getElementById('location-info').textContent = `${location} | ${temperature}`;
+                        } else {
+                            document.getElementById('location-info').textContent = 'Unable to fetch weather data';
+                        }
+                    }, function (error) {
+                        console.error('Error fetching location:', error);
+                        document.getElementById('location-info').textContent = 'Unable to fetch location';
+                    });
+                } else {
+                    document.getElementById('location-info').textContent = 'Geolocation not supported by your browser';
+                }
+            } catch (error) {
+                console.error('Error fetching location or temperature:', error);
+                document.getElementById('location-info').textContent = 'Error fetching data';
+            }
+        }
+
+        // Call the function when the page loads
+        fetchLocationAndTemperature();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plant Cure - Image Detection</title>
+  <link href='https://fonts.googleapis.com/css?family=Raleway:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="../static/css/detect.css">
+  <style>
+    /* Container for background image */
+    .background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("{{ url_for('static', filename='images/nursery.jpg') }}");
+      background-size: cover;
+      background-position: center;
+      z-index: -2;
+      filter: blur(10px); /* Apply blur effect */
+    }
+
+    /* Apply an overlay to darken the background slightly */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent overlay */
+      z-index: -1;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background image container -->
+  <div class="background-container"></div>
+  <div class="overlay"></div>
+
+  <nav>
+    <div class="nav-left">
+      <a href="{{ url_for('home') }}" style="color: white; text-decoration: none;">Plant Cure</a>
+    </div>
+    <div class="nav-right">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Left GIF -->
+  <img class="decorative-gif gif-left" src="{{ url_for('static', filename='images/plant7.gif') }}" alt="Aesthetic Plant GIF">
+
+  <div class="wrapper">
+    <h1>Plant Detection</h1>
+
+    <!-- Flex container for horizontal layout -->
+    <div class="flex-container">
+        <!-- Upload section -->
+        <div class="upload-section">
+            <p>Upload an image to check the health of your plant.</p>
+
+            <form action="{{ url_for('predict', plant=plant) }}" method="POST" enctype="multipart/form-data">
+                <label class="custom-file-upload">
+                    <input id="file-upload" type="file" name="file" accept="image/*" onchange="handleFileUpload(this)" required />
+                    <span>Click to upload an image</span>
+                </label>
+
+                <div id="file-name"></div>
+
+                <!-- Loading GIF -->
+                <img id="loading-gif" class="loading-gif" src="https://i.gifer.com/YCZH.gif" alt="loading">
+
+                <button type="submit" class="btn">Detect</button>
+
+                <button type="button" id="reupload-btn" class="reupload-btn" onclick="reuploadImage()">Upload Another Picture</button>
+            </form>
+        </div>
+
+        <!-- Prediction section -->
+        <div class="result-section">
+          <!-- Display prediction result -->
+          {% if prediction_text %}
+            <div class="prediction">
+                <h2>Prediction Results:</h2>
+                <p>{{ prediction_text }}</p>
+            </div>
+          {% endif %}
+
+          <!-- Display the "Know More" button if there is a prediction -->
+          {% if show_info_button %}
+              <div class="learn-more" style="margin-top: 20px;">
+                <a href="{{ url_for('info', plant=plant, predicted_class=predicted_class) }}" class="btn-info">
+                  Click to learn more about {{ predicted_class }}
+                </a>
+                
+              </div>
+          {% endif %}
+
+
+          <!-- Display the image with boxes if it exists -->
+          {% if img_url %}
+              <div class="result-image">
+                  <img src="{{ img_url }}" alt="Detected Image" class="detected-image">
+              </div>
+          {% endif %}
+      </div>
+    </div>
+</div>
+
+  <script>
+    function handleFileUpload(input) {
+      const fileName = input.files[0].name;
+      document.getElementById('file-name').innerText = "File uploaded: " + fileName;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const preview = document.getElementById('image-preview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+
+        document.getElementById('loading-gif').style.display = 'none'; // Hide loading GIF after file is loaded
+      };
+      reader.readAsDataURL(input.files[0]);
+
+      document.getElementById('reupload-btn').style.display = 'block'; // Show re-upload button
+    }
+
+    function reuploadImage() {
+      document.getElementById('file-upload').value = '';
+      document.getElementById('file-name').innerText = '';
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('reupload-btn').style.display = 'none';
+      document.getElementById('loading-gif').style.display = 'block'; // Show loading GIF when new file is selected
+    }
+  </script>
+</body>
+</html>
