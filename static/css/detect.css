@@ -1,0 +1,286 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    background: linear-gradient(120deg, #e8f5e9, #b9f6ca); /* Soft green gradient */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    position: relative;
+  }
+
+  
+
+  nav {
+    width: 100%;
+    background-color: #388e3c;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+  }
+
+  nav .nav-left {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-left: 20px;
+  }
+
+  nav .nav-right a {
+    color: white;
+    margin-right: 20px;
+    text-decoration: none;
+    font-size: 1.1em;
+  }
+
+  .wrapper {
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    text-align: center;
+    z-index: 2;
+  }
+
+  .wrapper h1 {
+    font-family: 'Roboto Slab', serif;
+    color: #2e7d32;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+
+  .wrapper p {
+    color: #2e7d32;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+  }
+
+  form {
+    width: 100%;
+    text-align: center;
+  }
+
+  .custom-file-upload {
+    border: 2px dashed #2e7d32;
+    display: inline-block;
+    padding: 20px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+
+  .custom-file-upload:hover {
+    background-color: #2e7d32;
+    color: white;
+  }
+
+  .custom-file-upload span {
+    display: block;  /* Ensures the text appears on a new line */
+    margin-top: 10px;  /* Optional: adds some space between the input and text */
+  }
+
+
+  #file-name {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #2e7d32;
+    text-align: center;
+  }
+
+  .image-preview {
+    display: none;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn {
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background-color: #2e7d32;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn:hover {
+    background-color: #388e3c;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Button styling */
+  .btn-info {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.2s ease-in-out, box-shadow 0.2s;
+  }
+
+  .btn-info:hover {
+    background-color: #45a049;
+    transform: translateY(-3px);  /* Slight hover lift */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);  /* Soft shadow effect */
+  }
+
+  .reupload-btn {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 2px solid #2e7d32;
+    background-color: transparent;
+    color: #2e7d32;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+  }
+
+  .reupload-btn:hover {
+    background-color: #2e7d32;
+    color: white;
+  }
+
+  .prediction {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #c8e6c9;
+    border-radius: 8px;
+    border: 1px solid #aed581;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    font-size: 0.8em;
+    color: #388e3c;
+  }
+
+  @media (max-width: 768px) {
+    .prediction {
+      font-size: 0.5em; /* Adjust font size for smaller screens */
+    }
+  }
+
+  /* Flexbox container for horizontal layout */
+  .flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;  /* Space between the sections */
+    margin-top: 20px;
+  }
+
+  /* Upload section styling */
+  .upload-section {
+    flex: 1;  /* Take up equal space */
+  }
+
+  /* Result section styling */
+  .result-section {
+    max-height: 60vh; /* Limit the section height to 60% of viewport */
+    overflow-y: auto; /* Enable vertical scrolling */
+    text-align: center;
+    padding: 10px;
+  }
+
+
+  /* Detected image styling */
+  .detected-image {
+    max-width: 100%;  /* Ensure image scales dynamically */
+    max-height: 35vh; /* Limit height to 60% of the viewport */
+    width: auto;
+    height: auto;
+    border: 2px solid #388e3c;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    object-fit: contain;  /* Ensures the image retains aspect ratio within the defined max width/height */
+  }
+
+
+  /* Responsive layout for smaller screens */
+  @media (max-width: 768px) {
+    .flex-container {
+      flex-direction: column; /* Stack sections vertically */
+    }
+
+    .detected-image {
+      max-width: 100%; /* Adjust size for smaller screens */
+      max-height: 30vh; /* Limit height on smaller screens */
+    }
+
+    .result-section {
+      max-height: 50vh; /* Allow scroll if content overflows */
+      overflow-y: auto;  /* Ensure scrollability on smaller screens */
+      padding: 10px;
+  }
+}
+
+
+
+
+
+  /* GIF styles */
+  .decorative-gif {
+    width: 150px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .gif-left {
+    left: 20px;
+  }
+
+  .gif-right {
+    right: 20px;
+  }
+
+  /* Loading GIF */
+  .loading-gif {
+    margin-top: 20px;
+    display: none;
+    width: 100px;
+  }
+
+  @media (max-width: 768px) {
+    .wrapper {
+      padding: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+
+    .custom-file-upload {
+      padding: 15px;
+    }
+
+    .decorative-gif {
+      display: none; /* Hide GIFs on smaller screens */
+    }
+  }

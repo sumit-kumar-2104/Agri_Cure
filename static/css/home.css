@@ -1,0 +1,122 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4CAF50;
+    padding: 15px 30px;
+    color: white;
+}
+.navbar h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+.container {
+    text-align: center;
+    margin: 50px auto;
+    max-width: 800px;
+}
+.card-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 200px;
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+.card img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.card h2 {
+    margin: 15px 0;
+    font-size: 1.2em;
+    color: #333;
+}
+.card button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.card button:hover {
+    background-color: #45a049;
+}
+.card.disabled button {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+@media (max-width: 768px) {
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Bubble for location and temperature */
+.location-bubble {
+    position: fixed;
+    top: 70px; /* Adjusted to move below the navbar */
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+.location-bubble img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+/* Add plant suggestion */
+.suggestion-section {
+    margin-top: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.suggestion-section input, .suggestion-section button {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.suggestion-section input {
+    width: 70%;
+    border: 1px solid #ccc;
+}
+.suggestion-section button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+.suggestion-section button:hover {
+    background-color: #45a049;
+}
