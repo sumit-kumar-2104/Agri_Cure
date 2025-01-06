@@ -13,7 +13,7 @@ from inference_sdk import InferenceHTTPClient
 
 # Initialize the Flask app
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
     app.config['SECRET_KEY'] = 'your_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
@@ -68,6 +68,51 @@ def create_app():
         'N K': 'Nitrogen and Potassium Deficiency (Nutritional)',
         'Healthy': 'Healthy'
     }
+
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        if current_user.is_authenticated:
+            return redirect(url_for('home'))
+        if request.method == 'POST':
+            email = request.form['email']
+            password = request.form['password']
+            user = User.query.filter_by(email=email).first()
+            if user and bcrypt.check_password_hash(user.password, password):
+                login_user(user)
+                flash('Login successful!', 'success')
+                return redirect(url_for('home'))  # Redirect to home after successful login
+            else:
+                flash('Login failed. Check email and password.', 'danger')
+        return render_template('login.html')
+
+    @app.route('/signup', methods=['GET', 'POST'])
+    def signup():
+        if current_user.is_authenticated:
+            return redirect(url_for('home'))
+        
+        if request.method == 'POST':
+            username = request.form['username']
+            email = request.form['email']
+            password = request.form['password']
+            
+            # Check if username or email already exists
+            existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+            if existing_user:
+                if existing_user.username == username:
+                    flash('Username already exists. Please choose a different one.', 'danger')
+                elif existing_user.email == email:
+                    flash('Email already exists. Please use a different email address.', 'danger')
+                return redirect(url_for('signup'))
+            
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            user = User(username=username, email=email, password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
+            flash('Account created successfully! You can now log in.', 'success')
+            return redirect(url_for('login'))
+        
+        return render_template('signup.html')
+
 
 
     # Default landing page (Welcome page)
@@ -147,16 +192,24 @@ def create_app():
                 for result in plant_results:
                     for box in result.boxes:
                         confidence = round(box.conf[0].item(), 2)
-                        if confidence > 0.50:
+                        if confidence > 0.60:
                             plant_present = True
                             break
                 
                 if not plant_present:
+                    # Save the result image in static/uploads
+                    img_filename = "uploaded_image.png"
+                    img_path = os.path.join(uploads_dir, img_filename)
+                    img.save(img_path)
+
+                    img_url = url_for('static', filename=f"uploads/{img_filename}")
                     return render_template(
                         'detect.html',
                         plant=plant,
-                        prediction_text="The picture does not contain a plant or is unclear. Plant Cure works best on plants."
+                        prediction_text="The picture does not contain a plant or is unclear. Plant Cure works best on plants.",
+                        img_url=img_url,
                     )
+                
 
             # Step 3: Detect diseases using the specific model for Bitter Gourd or Tomato
             if plant == 'bittergourd':
@@ -236,37 +289,7 @@ def create_app():
 
 
 
-    @app.route('/login', methods=['GET', 'POST'])
-    def login():
-        if current_user.is_authenticated:
-            return redirect(url_for('home'))
-        if request.method == 'POST':
-            email = request.form['email']
-            password = request.form['password']
-            user = User.query.filter_by(email=email).first()
-            if user and bcrypt.check_password_hash(user.password, password):
-                login_user(user)
-                flash('Login successful!', 'success')
-                return redirect(url_for('home'))  # Redirect to home after successful login
-            else:
-                flash('Login failed. Check email and password.', 'danger')
-        return render_template('login.html')
-
-    @app.route('/signup', methods=['GET', 'POST'])
-    def signup():
-        if current_user.is_authenticated:
-            return redirect(url_for('home'))
-        if request.method == 'POST':
-            username = request.form['username']
-            email = request.form['email']
-            password = request.form['password']
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            user = User(username=username, email=email, password=hashed_password)
-            db.session.add(user)
-            db.session.commit()
-            flash('Account created successfully! You can now log in.', 'success')
-            return redirect(url_for('login'))
-        return render_template('signup.html')
+    
 
     
 
