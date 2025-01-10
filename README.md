@@ -3,7 +3,7 @@
 
 ## Overview
 
-This repository contains the code and resources for an Android application designed to detect plant diseases using a multi-layered approach powered by YOLOv8. The application leverages three machine learning models to ensure accurate and efficient image processing:
+This repository contains the code and resources for an Web application designed to detect plant diseases using a multi-layered approach powered by YOLOv8. The application leverages three machine learning models to ensure accurate and efficient image processing:
 
 1. **General Object Rejection Model:** Filters out images containing non-plant objects, such as humans, vehicles, or other unrelated elements.
 2. **Plant Detection Model:** Identifies whether the input image contains a plant or if it is an invalid test case, such as a green screen or an unrelated object.
