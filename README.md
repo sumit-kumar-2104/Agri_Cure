@@ -80,13 +80,13 @@ Augmented dataset: 22,736 images
    git clone https://github.com/sumit-kumar-2104/plant_app_1.git
    ```
 2. Install dependencies as specified in the `requirements.txt` file.
-3. Build the Android application using the provided source code.
+3. Build the Web application using the provided source code.
 
 ---
 
 ## Usage
 
-1. Launch the application on your Android device.
+1. Launch the application on your device.
 2. Upload an image through the interface.
 3. Receive results:
    - If non-plant content is detected, the image is rejected.
