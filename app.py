@@ -216,8 +216,8 @@ def create_app():
                 detection_model = model  # Bitter Gourd model
                 plant_diseases = bitter_gourd_diseases  # Bitter Gourd diseases mapping
                 
-                # Adjust confidence threshold to 90% for Bitter Gourd
-                confidence_threshold = 0.90
+                # Adjust confidence threshold to 75% for Bitter Gourd
+                confidence_threshold = 0.75
             elif plant == 'tomato':
                 detection_model = tom_model  # Tomato model
                 plant_diseases = tomato_diseases  # Tomato diseases mapping
