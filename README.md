@@ -56,7 +56,7 @@ Augmented dataset: 22,736 images
 
 ### Precision Plant Validation Model
 - Validates plant images passing prior tests.
-- Applies a strict precision threshold (>90%) to eliminate low-confidence cases.
+- Applies a strict precision threshold (>75%) to eliminate low-confidence cases.
 
 ### Disease Detection Model
 - Identifies diseases in the final validated plant images.
