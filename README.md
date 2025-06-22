@@ -39,8 +39,8 @@ The app is based on research data involving bitter gourd leaves, focusing on:
 - Nutrient Deficiencies: Potassium, Magnesium, Nitrogen, and their combinations
 - Healthy leaves for reference
 
-Initial dataset: 947 images
-Augmented dataset: 22,736 images
+Initial dataset: 785 images
+Augmented dataset: 2,432 images
 
 ---
 
@@ -66,10 +66,10 @@ Augmented dataset: 22,736 images
 
 ## Performance Metrics
 
-- **Mean Average Precision (mAP):** 99.5% at IoU=0.50
-- **Precision:** 99.7%
-- **Recall:** 99.8%
-- **F1 Score:** 99.5%
+- **Mean Average Precision (mAP):** 92.9% at IoU=0.50
+- **Precision:** 90%
+- **Recall:** 87%
+- **F1 Score:** 91.66%
 
 ---
 
